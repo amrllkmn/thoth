@@ -1,0 +1,46 @@
+# Node.js dependencies (frontend)
+node_modules
+
+# Svelte / Vite build outputs
+.output
+.svelte-kit
+/build
+.vercel
+.netlify
+.wrangler
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite-specific files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Logs
+*.log
+
+# Editor folders
+/.vscode
+/.idea
+
+# Go build outputs (backend)
+bin/
+*.exe
+*.test
+
+# SQLite database (backend)
+*.db
+
+# Go dependencies (optional if using Go modules)
+vendor/
+
+# Ignore generated files
+*.swp
+*.swo
