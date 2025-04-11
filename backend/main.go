@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
-
 func main() {
-	fmt.Println("Hello, World!")
+	app := CreateApp()
+	app.Run()
 }
