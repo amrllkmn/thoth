@@ -6,7 +6,7 @@ import (
 )
 
 func InitDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("thoth.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("./data/thoth.db"), &gorm.Config{})
 	if err != nil {
 		panic("Failed to init database")
 	}
