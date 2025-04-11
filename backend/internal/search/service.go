@@ -1,31 +1,22 @@
 package search
 
-type SearchService interface {
-	FindAll()
-	FindByQuery(query string)
-	FindByID(id uint)
-}
+import "github.com/amrllkmn/thoth/backend/internal/utils"
 
 type SQLiteSearchService struct {
-	repo SQLiteBookRepository
+	repo utils.BookRepository
 }
 
-func (s *SQLiteSearchService) FindAll()                 {}
+func (s *SQLiteSearchService) FindAll() ([]utils.Book, error) {
+	books, err := s.repo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
+}
+
 func (s *SQLiteSearchService) FindByQuery(query string) {}
 func (s *SQLiteSearchService) FindByID(id uint)         {}
 
-func NewSQLiteSearchService(repo SQLiteBookRepository) SearchService {
+func NewSQLiteSearchService(repo utils.BookRepository) utils.SearchService {
 	return &SQLiteSearchService{repo: repo}
-}
-
-type MeilisearchSearchService struct {
-	repo MeilisearchBookRepository
-}
-
-func (s *MeilisearchSearchService) FindAll()                 {}
-func (s *MeilisearchSearchService) FindByQuery(query string) {}
-func (s *MeilisearchSearchService) FindByID(id uint)         {}
-
-func NewMeilisearchSearchService(repo MeilisearchBookRepository) SearchService {
-	return &MeilisearchSearchService{repo: repo}
 }
