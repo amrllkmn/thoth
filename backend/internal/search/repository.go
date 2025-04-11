@@ -9,7 +9,12 @@ type SQLiteBookRepository struct {
 	db *gorm.DB
 }
 
-func (r *SQLiteBookRepository) FindAll() {
+func (r *SQLiteBookRepository) FindAll() ([]utils.Book, error) {
+	var books []utils.Book
+	if err := r.db.Limit(20).Find(&books).Error; err != nil {
+		return nil, err
+	}
+	return books, nil
 
 }
 func (r *SQLiteBookRepository) FindByQuery(query string) {
