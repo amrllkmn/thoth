@@ -23,6 +23,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y libc6 ca-certificates && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/server .
+COPY data/thoth.db ./data/thoth.db
 VOLUME [ "/data" ]
 
 EXPOSE 8080
