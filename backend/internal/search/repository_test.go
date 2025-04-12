@@ -14,8 +14,8 @@ func setupTestDB() *gorm.DB {
 	db.AutoMigrate(&utils.Book{})
 
 	// Seed test data
-	db.Create(&utils.Book{Isbn13: 1234567890123, Isbn10: "1234567890", Title: "Book 1", Authors: "Author 1"})
-	db.Create(&utils.Book{Isbn13: 9876543210987, Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"})
+	db.Create(&utils.Book{Isbn13: "1234567890123", Isbn10: "1234567890", Title: "Book 1", Authors: "Author 1"})
+	db.Create(&utils.Book{Isbn13: "9876543210987", Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"})
 	return db
 }
 
@@ -58,6 +58,45 @@ func TestRepoFindByQuery_DBError(t *testing.T) {
 	db.Migrator().DropTable(&utils.Book{})
 
 	books, err := repo.FindByQuery("Book 1")
+	assert.Error(t, err)
+	assert.Nil(t, books)
+}
+
+func TestRepoFindByID_ISBN13(t *testing.T) {
+	db := setupTestDB()
+	repo := NewSQLiteBookRepository(db)
+
+	book, err := repo.FindByID("1234567890123")
+	assert.NoError(t, err)
+	assert.Equal(t, "Book 1", book.Title)
+}
+
+func TestRepoFindByID_ISBN10(t *testing.T) {
+	db := setupTestDB()
+	repo := NewSQLiteBookRepository(db)
+
+	book, err := repo.FindByID("1234567890") // ISBN10
+	assert.NoError(t, err)
+	assert.Equal(t, "Book 1", book.Title)
+}
+
+func TestRepoFindByID_NotFound(t *testing.T) {
+	db := setupTestDB()
+	repo := NewSQLiteBookRepository(db)
+
+	book, err := repo.FindByID("0000000000000") // Non-existing ISBN
+	assert.NoError(t, err)
+	assert.Nil(t, book)
+}
+
+func TestRepoFindByID_DBError(t *testing.T) {
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	repo := NewSQLiteBookRepository(db)
+
+	// Simulate a DB error
+	db.Migrator().DropTable(&utils.Book{})
+
+	books, err := repo.FindByID("1234567890123")
 	assert.Error(t, err)
 	assert.Nil(t, books)
 }

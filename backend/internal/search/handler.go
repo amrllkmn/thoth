@@ -48,6 +48,25 @@ func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
 	})
 }
 
+func (h *SQLiteSearchHandler) FindByID(c *gin.Context) {
+	isbn := c.Param("isbn")
+	book, err := h.searchService.FindByID(isbn)
+	if err != nil {
+		log.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong",
+		})
+		return
+	}
+	if book == nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "Book not found",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, book)
+}
+
 func NewSQLiteSearchHandler(searchService utils.SearchService) *SQLiteSearchHandler {
 	return &SQLiteSearchHandler{
 		searchService: searchService,
