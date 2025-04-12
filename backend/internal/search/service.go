@@ -21,7 +21,10 @@ func (s *SQLiteSearchService) FindByQuery(query string) ([]utils.Book, error) {
 	}
 	return books, nil
 }
-func (s *SQLiteSearchService) FindByID(id uint) {}
+func (s *SQLiteSearchService) FindByID(isbn string) (*utils.Book, error) {
+	book, err := s.repo.FindByID(isbn)
+	return book, err
+}
 
 func NewSQLiteSearchService(repo utils.BookRepository) utils.SearchService {
 	return &SQLiteSearchService{repo: repo}

@@ -25,12 +25,19 @@ func (m *MockBookRepository) FindByQuery(query string) ([]utils.Book, error) {
 	}
 	return filteredBooks, m.err
 }
-func (m *MockBookRepository) FindByID(id uint) {}
+func (m *MockBookRepository) FindByID(isbn string) (*utils.Book, error) {
+	for _, book := range m.books {
+		if book.Isbn13 == isbn || book.Isbn10 == isbn {
+			return &book, m.err
+		}
+	}
+	return nil, m.err
+}
 
 func setupRepo() *MockBookRepository {
 	mockBooks := []utils.Book{
-		{Isbn13: 1234567890123, Isbn10: "1234567890", Title: "Book 1", Authors: "Author 1"},
-		{Isbn13: 9876543210987, Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"},
+		{Isbn13: "1234567890123", Isbn10: "1234567890", Title: "Book 1", Authors: "Author 1"},
+		{Isbn13: "9876543210987", Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"},
 	}
 
 	mockRepo := &MockBookRepository{
@@ -82,4 +89,36 @@ func TestServiceFindByQuery_RepoError(t *testing.T) {
 	books, err := service.FindByQuery("Book 1")
 	assert.Error(t, err)
 	assert.Nil(t, books)
+}
+
+func TestServiceFindByID(t *testing.T) {
+	mockRepo := setupRepo()
+
+	service := NewSQLiteSearchService(mockRepo)
+
+	book, err := service.FindByID("1234567890123")
+
+	assert.NoError(t, err)
+	assert.Equal(t, "Book 1", book.Title)
+}
+
+func TestServiceFindByID_NotFound(t *testing.T) {
+	mockRepo := setupRepo()
+
+	service := NewSQLiteSearchService(mockRepo)
+
+	book, err := service.FindByID("non-existing-isbn")
+
+	assert.NoError(t, err)
+	assert.Nil(t, book)
+}
+
+func TestServiceFindByID_RepoError(t *testing.T) {
+	mockRepo := setupRepo()
+	mockRepo.err = assert.AnError
+	mockRepo.books = nil
+	service := NewSQLiteSearchService(mockRepo)
+	book, err := service.FindByID("1234567890123")
+	assert.Error(t, err)
+	assert.Nil(t, book)
 }
