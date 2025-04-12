@@ -73,22 +73,29 @@ func TestHandlerFindByQuery(t *testing.T) {
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
+	// Assert 200 OK
 	router.ServeHTTP(resp, req)
 	assert.Equal(t, http.StatusOK, resp.Code)
 
 	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
 	assert.NoError(t, err)
 
+	// Assert response body
 	books, ok := responseBody["books"].([]any)
 	assert.True(t, ok)
 	assert.Len(t, books, 1)
 
+	// Assert metadata
 	metadata, ok := responseBody["metadata"].(map[string]any)
 	assert.True(t, ok)
 
 	total_metadata, ok := metadata["total"]
 	assert.True(t, ok)
 	assert.Equal(t, float64(1), total_metadata)
+
+	query_metadata, ok := metadata["query"]
+	assert.True(t, ok)
+	assert.Equal(t, "Book 1", query_metadata)
 
 	// Check if the book title is correct
 	book, ok := books[0].(map[string]any)

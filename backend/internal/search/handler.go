@@ -38,6 +38,7 @@ func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
 		"books": books,
 		"metadata": gin.H{
 			"total": len(books),
+			"query": query,
 		},
 	})
 }
