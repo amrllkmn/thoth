@@ -12,7 +12,7 @@ type MockBookRepository struct {
 	err   error
 }
 
-func (m *MockBookRepository) FindAll() ([]utils.Book, error) {
+func (m *MockBookRepository) FindAll(page, limit int) ([]utils.Book, error) {
 	return m.books, m.err
 }
 
@@ -52,7 +52,7 @@ func TestServiceFindAll(t *testing.T) {
 
 	service := NewSQLiteSearchService(mockRepo)
 
-	books, err := service.FindAll()
+	books, err := service.FindAll(0, 0)
 
 	assert.NoError(t, err)
 	assert.Len(t, books, 2)
@@ -76,7 +76,7 @@ func TestServiceFindAll_RepoError(t *testing.T) {
 	mockRepo.err = assert.AnError
 	mockRepo.books = nil
 	service := NewSQLiteSearchService(mockRepo)
-	books, err := service.FindAll()
+	books, err := service.FindAll(0, 0)
 	assert.Error(t, err)
 	assert.Nil(t, books)
 }

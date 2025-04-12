@@ -23,7 +23,7 @@ func TestRepoFindAll(t *testing.T) {
 	db := setupTestDB()
 	repo := NewSQLiteBookRepository(db)
 
-	books, err := repo.FindAll()
+	books, err := repo.FindAll(0, 0)
 	assert.NoError(t, err)
 	assert.Len(t, books, 2)
 }
@@ -45,7 +45,7 @@ func TestRepoFindAll_DBError(t *testing.T) {
 	// Simulate a DB error
 	db.Migrator().DropTable(&utils.Book{})
 
-	books, err := repo.FindAll()
+	books, err := repo.FindAll(0, 0)
 	assert.Error(t, err)
 	assert.Nil(t, books)
 }

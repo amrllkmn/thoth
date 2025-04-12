@@ -3,6 +3,7 @@ package search
 import (
 	"errors"
 
+	"github.com/amrllkmn/thoth/backend/internal/database"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"gorm.io/gorm"
 )
@@ -11,9 +12,9 @@ type SQLiteBookRepository struct {
 	db *gorm.DB
 }
 
-func (r *SQLiteBookRepository) FindAll() ([]utils.Book, error) {
+func (r *SQLiteBookRepository) FindAll(page, limit int) ([]utils.Book, error) {
 	var books []utils.Book
-	if err := r.db.Limit(20).Find(&books).Error; err != nil {
+	if err := r.db.Scopes(database.Paginate(page, limit)).Find(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil
