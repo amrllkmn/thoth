@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -37,15 +38,28 @@ func TestHandlerFindAll(t *testing.T) {
 	router := gin.Default()
 
 	handler := search.NewSQLiteSearchHandler(&mockSearchService{})
-	router.GET("/api/v1/search", handler.FindAll)
+	router.GET("/api/v1/books", handler.FindAll)
 
-	req, _ := http.NewRequest("GET", "/api/v1/search", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
 	resp := httptest.NewRecorder()
+	var responseBody map[string]any
 
 	router.ServeHTTP(resp, req)
 	assert.Equal(t, http.StatusOK, resp.Code)
-	assert.Contains(t, resp.Body.String(), "Book 1")
-	assert.Contains(t, resp.Body.String(), "Book 2")
+
+	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	assert.NoError(t, err)
+
+	books, ok := responseBody["books"].([]any)
+	assert.True(t, ok)
+	assert.Len(t, books, 2)
+
+	metadata, ok := responseBody["metadata"].(map[string]any)
+	assert.True(t, ok)
+
+	total_metadata, ok := metadata["total"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(2), total_metadata)
 }
 
 func TestHandlerFindByQuery(t *testing.T) {
@@ -53,13 +67,31 @@ func TestHandlerFindByQuery(t *testing.T) {
 	router := gin.Default()
 
 	handler := search.NewSQLiteSearchHandler(&mockSearchService{})
-	router.GET("/api/v1/search", handler.FindByQuery)
+	router.GET("/api/v1/books/search", handler.FindByQuery)
 
-	req, _ := http.NewRequest("GET", "/api/v1/search?query=Book 1", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)
 	resp := httptest.NewRecorder()
+	var responseBody map[string]any
 
 	router.ServeHTTP(resp, req)
 	assert.Equal(t, http.StatusOK, resp.Code)
-	assert.Contains(t, resp.Body.String(), "Book 1")
-	assert.NotContains(t, resp.Body.String(), "Book 2")
+
+	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	assert.NoError(t, err)
+
+	books, ok := responseBody["books"].([]any)
+	assert.True(t, ok)
+	assert.Len(t, books, 1)
+
+	metadata, ok := responseBody["metadata"].(map[string]any)
+	assert.True(t, ok)
+
+	total_metadata, ok := metadata["total"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(1), total_metadata)
+
+	// Check if the book title is correct
+	book, ok := books[0].(map[string]any)
+	assert.True(t, ok)
+	assert.Equal(t, "Book 1", book["title"])
 }

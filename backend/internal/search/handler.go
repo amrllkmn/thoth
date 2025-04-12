@@ -20,6 +20,9 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"books": books,
+		"metadata": gin.H{
+			"total": len(books),
+		},
 	})
 }
 
@@ -33,6 +36,9 @@ func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"books": books,
+		"metadata": gin.H{
+			"total": len(books),
+		},
 	})
 }
 
