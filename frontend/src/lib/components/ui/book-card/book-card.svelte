@@ -20,6 +20,7 @@
 	let { book }: { book: IBook } = $props();
 	let primaryCategory = book.categories?.split(',')[0]?.trim() || 'Unknown';
 	let formattedRating = book.average_rating ? book.average_rating.toFixed(1) : 'N/A';
+	let isbn = book.isbn10 || book.isbn13;
 </script>
 
 <Card.Root class="h-full overflow-hidden transition-all hover:shadow-md">
@@ -65,8 +66,8 @@
 		class="mt-auto flex items-center justify-between border-t pt-1 text-[10px] text-muted-foreground sm:text-xs"
 	>
 		<span>{book.num_pages} pages</span>
-		<span class="max-w-[120px] truncate" title={`ISBN: ${book.isbn13}`}>
-			ISBN: {book.isbn10 || book.isbn13}
+		<span class="max-w-[120px] truncate" title={`ISBN: ${isbn}`}>
+			ISBN: {isbn}
 		</span>
 	</Card.Footer>
 </Card.Root>
