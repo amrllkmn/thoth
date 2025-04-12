@@ -37,3 +37,27 @@ func TestRepoFindByQuery(t *testing.T) {
 	assert.Len(t, books, 1)
 	assert.Equal(t, "Book 1", books[0].Title)
 }
+
+func TestRepoFindAll_DBError(t *testing.T) {
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	repo := NewSQLiteBookRepository(db)
+
+	// Simulate a DB error
+	db.Migrator().DropTable(&utils.Book{})
+
+	books, err := repo.FindAll()
+	assert.Error(t, err)
+	assert.Nil(t, books)
+}
+
+func TestRepoFindByQuery_DBError(t *testing.T) {
+	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	repo := NewSQLiteBookRepository(db)
+
+	// Simulate a DB error
+	db.Migrator().DropTable(&utils.Book{})
+
+	books, err := repo.FindByQuery("Book 1")
+	assert.Error(t, err)
+	assert.Nil(t, books)
+}

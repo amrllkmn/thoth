@@ -2,6 +2,7 @@ package search
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -117,4 +118,62 @@ func TestHandlerFindByQuery(t *testing.T) {
 	book, ok := books[0].(map[string]any)
 	assert.True(t, ok)
 	assert.Equal(t, "Book 1", book["title"])
+}
+
+func TestHandlerFindAll_Error(t *testing.T) {
+	mockSearchService := setupService()
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+
+	handler := NewSQLiteSearchHandler(mockSearchService)
+	router.GET("/api/v1/books", handler.FindAll)
+
+	// Simulate an error in the service
+	mockSearchService.err = assert.AnError
+	mockSearchService.books = nil
+
+	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusInternalServerError, resp.Code)
+
+	fmt.Println(resp.Body.String())
+
+	var responseBody map[string]any
+	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	assert.NoError(t, err)
+
+	message, ok := responseBody["message"].(string)
+	assert.True(t, ok)
+	assert.Equal(t, "Something went wrong", message)
+}
+
+func TestHandlerFindByQuery_Error(t *testing.T) {
+	mockSearchService := setupService()
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+
+	handler := NewSQLiteSearchHandler(mockSearchService)
+	router.GET("/api/v1/books/search", handler.FindByQuery)
+
+	// Simulate an error in the service
+	mockSearchService.err = assert.AnError
+	mockSearchService.books = nil
+
+	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusInternalServerError, resp.Code)
+
+	fmt.Println(resp.Body.String())
+
+	var responseBody map[string]any
+	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	assert.NoError(t, err)
+
+	message, ok := responseBody["message"].(string)
+	assert.True(t, ok)
+	assert.Equal(t, "Something went wrong", message)
 }

@@ -19,6 +19,7 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Something went wrong",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"books": books,
@@ -36,6 +37,7 @@ func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Something went wrong",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"books": books,
