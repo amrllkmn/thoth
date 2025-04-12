@@ -19,20 +19,12 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
-		log.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid page parameter",
-		})
-		return
+		pageInt = 1
 	}
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
-		log.Error(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid limit parameter",
-		})
-		return
+		limitInt = 20 // Default limit
 	}
 
 	books, err := h.searchService.FindAll(pageInt, limitInt)
@@ -47,6 +39,8 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 		"books": books,
 		"metadata": gin.H{
 			"total": len(books),
+			"page":  pageInt,
+			"limit": limitInt,
 		},
 	})
 }

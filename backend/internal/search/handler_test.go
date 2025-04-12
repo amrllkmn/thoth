@@ -63,7 +63,7 @@ func TestHandlerFindAll(t *testing.T) {
 	handler := NewSQLiteSearchHandler(mockSearchService)
 	router.GET("/api/v1/books", handler.FindAll)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books?page=1&limit=10", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -83,9 +83,18 @@ func TestHandlerFindAll(t *testing.T) {
 	total_metadata, ok := metadata["total"]
 	assert.True(t, ok)
 	assert.Equal(t, float64(2), total_metadata)
+
+	page_metadata, ok := metadata["page"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(1), page_metadata)
+
+	limit_metadata, ok := metadata["limit"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(20), limit_metadata)
 }
 
-func TestHandlerFindAll_InvalidPage(t *testing.T) {
+func TestHandlerFindAll_Paginated(t *testing.T) {
+
 	mockSearchService := setupService()
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
@@ -93,42 +102,34 @@ func TestHandlerFindAll_InvalidPage(t *testing.T) {
 	handler := NewSQLiteSearchHandler(mockSearchService)
 	router.GET("/api/v1/books", handler.FindAll)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books?page=invalid&limit=10", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books?page=2&limit=30", nil)
 	resp := httptest.NewRecorder()
+	var responseBody map[string]any
 
 	router.ServeHTTP(resp, req)
-	assert.Equal(t, http.StatusBadRequest, resp.Code)
+	assert.Equal(t, http.StatusOK, resp.Code)
 
-	var responseBody map[string]any
 	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
 	assert.NoError(t, err)
 
-	message, ok := responseBody["message"].(string)
+	books, ok := responseBody["books"].([]any)
 	assert.True(t, ok)
-	assert.Equal(t, "Invalid page parameter", message)
-}
+	assert.Len(t, books, 2)
 
-func TestHandlerFindAll_InvalidLimit(t *testing.T) {
-	mockSearchService := setupService()
-	gin.SetMode(gin.TestMode)
-	router := gin.Default()
-
-	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books", handler.FindAll)
-
-	req, _ := http.NewRequest("GET", "/api/v1/books?page=1&limit=invalid", nil)
-	resp := httptest.NewRecorder()
-
-	router.ServeHTTP(resp, req)
-	assert.Equal(t, http.StatusBadRequest, resp.Code)
-
-	var responseBody map[string]any
-	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
-	assert.NoError(t, err)
-
-	message, ok := responseBody["message"].(string)
+	metadata, ok := responseBody["metadata"].(map[string]any)
 	assert.True(t, ok)
-	assert.Equal(t, "Invalid limit parameter", message)
+
+	total_metadata, ok := metadata["total"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(2), total_metadata)
+
+	page_metadata, ok := metadata["page"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(2), page_metadata)
+
+	limit_metadata, ok := metadata["limit"]
+	assert.True(t, ok)
+	assert.Equal(t, float64(30), limit_metadata)
 }
 
 func TestHandlerFindAll_Error(t *testing.T) {
@@ -143,7 +144,7 @@ func TestHandlerFindAll_Error(t *testing.T) {
 	mockSearchService.err = assert.AnError
 	mockSearchService.books = nil
 
-	req, _ := http.NewRequest("GET", "/api/v1/books?page=1&limit=10", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
