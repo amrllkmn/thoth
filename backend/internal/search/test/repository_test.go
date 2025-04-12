@@ -28,3 +28,13 @@ func TestRepoFindAll(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, books, 2)
 }
+
+func TestRepoFindByQuery(t *testing.T) {
+	db := setupTestDB()
+	repo := search.NewSQLiteBookRepository(db)
+
+	books, err := repo.FindByQuery("Book 1")
+	assert.NoError(t, err)
+	assert.Len(t, books, 1)
+	assert.Equal(t, "Book 1", books[0].Title)
+}

@@ -18,12 +18,12 @@ type Book struct {
 
 type BookRepository interface {
 	FindAll() ([]Book, error)
-	FindByQuery(query string)
+	FindByQuery(query string) ([]Book, error)
 	FindByID(id uint)
 }
 
 type SearchService interface {
 	FindAll() ([]Book, error)
-	FindByQuery(query string)
+	FindByQuery(query string) ([]Book, error)
 	FindByID(id uint)
 }

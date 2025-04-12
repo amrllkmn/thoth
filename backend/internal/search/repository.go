@@ -17,8 +17,12 @@ func (r *SQLiteBookRepository) FindAll() ([]utils.Book, error) {
 	return books, nil
 
 }
-func (r *SQLiteBookRepository) FindByQuery(query string) {
-
+func (r *SQLiteBookRepository) FindByQuery(query string) ([]utils.Book, error) {
+	var books []utils.Book
+	if err := r.db.Where("title LIKE ?", "%"+query+"%").Or("authors LIKE ?", "%"+query+"%").Find(&books).Error; err != nil {
+		return nil, err
+	}
+	return books, nil
 }
 func (r *SQLiteBookRepository) FindByID(id uint) {
 

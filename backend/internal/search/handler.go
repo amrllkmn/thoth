@@ -23,6 +23,19 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 	})
 }
 
+func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
+	query := c.Query("query")
+	books, err := h.searchService.FindByQuery(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"books": books,
+	})
+}
+
 func NewSQLiteSearchHandler(searchService utils.SearchService) *SQLiteSearchHandler {
 	return &SQLiteSearchHandler{
 		searchService: searchService,
