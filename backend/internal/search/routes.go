@@ -6,5 +6,6 @@ func SetupSQLiteRoutes(r *gin.Engine, handler SQLiteSearchHandler) {
 	searchRoutes := r.Group("/v1/books")
 	{
 		searchRoutes.GET("/", handler.FindAll)
+		searchRoutes.GET("/search", handler.FindByQuery)
 	}
 }

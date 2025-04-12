@@ -14,8 +14,14 @@ func (s *SQLiteSearchService) FindAll() ([]utils.Book, error) {
 	return books, nil
 }
 
-func (s *SQLiteSearchService) FindByQuery(query string) {}
-func (s *SQLiteSearchService) FindByID(id uint)         {}
+func (s *SQLiteSearchService) FindByQuery(query string) ([]utils.Book, error) {
+	books, err := s.repo.FindByQuery(query)
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
+}
+func (s *SQLiteSearchService) FindByID(id uint) {}
 
 func NewSQLiteSearchService(repo utils.BookRepository) utils.SearchService {
 	return &SQLiteSearchService{repo: repo}
