@@ -1,9 +1,8 @@
-package test
+package search
 
 import (
 	"testing"
 
-	"github.com/amrllkmn/thoth/backend/internal/search"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
@@ -22,7 +21,7 @@ func setupTestDB() *gorm.DB {
 
 func TestRepoFindAll(t *testing.T) {
 	db := setupTestDB()
-	repo := search.NewSQLiteBookRepository(db)
+	repo := NewSQLiteBookRepository(db)
 
 	books, err := repo.FindAll()
 	assert.NoError(t, err)
@@ -31,7 +30,7 @@ func TestRepoFindAll(t *testing.T) {
 
 func TestRepoFindByQuery(t *testing.T) {
 	db := setupTestDB()
-	repo := search.NewSQLiteBookRepository(db)
+	repo := NewSQLiteBookRepository(db)
 
 	books, err := repo.FindByQuery("Book 1")
 	assert.NoError(t, err)

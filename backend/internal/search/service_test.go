@@ -1,9 +1,8 @@
-package test
+package search
 
 import (
 	"testing"
 
-	"github.com/amrllkmn/thoth/backend/internal/search"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -44,7 +43,7 @@ func setupTest() *MockBookRepository {
 func TestServiceFindAll(t *testing.T) {
 	mockRepo := setupTest()
 
-	service := search.NewSQLiteSearchService(mockRepo)
+	service := NewSQLiteSearchService(mockRepo)
 
 	books, err := service.FindAll()
 
@@ -56,7 +55,7 @@ func TestServiceFindAll(t *testing.T) {
 func TestServiceFindByQuery(t *testing.T) {
 	mockRepo := setupTest()
 
-	service := search.NewSQLiteSearchService(mockRepo)
+	service := NewSQLiteSearchService(mockRepo)
 
 	books, err := service.FindByQuery("Book 1")
 

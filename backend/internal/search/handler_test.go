@@ -1,4 +1,4 @@
-package test
+package search
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/amrllkmn/thoth/backend/internal/search"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -37,7 +36,7 @@ func TestHandlerFindAll(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	handler := search.NewSQLiteSearchHandler(&mockSearchService{})
+	handler := NewSQLiteSearchHandler(&mockSearchService{})
 	router.GET("/api/v1/books", handler.FindAll)
 
 	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
@@ -66,7 +65,7 @@ func TestHandlerFindByQuery(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	handler := search.NewSQLiteSearchHandler(&mockSearchService{})
+	handler := NewSQLiteSearchHandler(&mockSearchService{})
 	router.GET("/api/v1/books/search", handler.FindByQuery)
 
 	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)
