@@ -2,7 +2,7 @@ package utils
 
 type Book struct {
 	ID            uint    `gorm:"primaryKey"`
-	Isbn13        int64   `gorm:"unique" json:"isbn13"`
+	Isbn13        string  `gorm:"unique" json:"isbn13"`
 	Isbn10        string  `gorm:"unique" json:"isbn10"`
 	Title         string  `json:"title"`
 	Subtitle      string  `json:"subtitle"`
@@ -19,11 +19,11 @@ type Book struct {
 type BookRepository interface {
 	FindAll() ([]Book, error)
 	FindByQuery(query string) ([]Book, error)
-	FindByID(id uint)
+	FindByID(isbn string) (*Book, error)
 }
 
 type SearchService interface {
 	FindAll() ([]Book, error)
 	FindByQuery(query string) ([]Book, error)
-	FindByID(id uint)
+	FindByID(isbn string) (*Book, error)
 }
