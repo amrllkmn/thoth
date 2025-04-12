@@ -12,31 +12,46 @@ import (
 )
 
 type mockSearchService struct {
+	books []utils.Book
+	err   error
+}
+
+func setupService() *mockSearchService {
+	mockBooks := []utils.Book{
+		{Isbn13: 1234567890123, Isbn10: "123457890", Title: "Book 1", Authors: "Author 1"},
+		{Isbn13: 9876543210987, Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"},
+	}
+	mockService := &mockSearchService{
+		books: mockBooks,
+		err:   nil,
+	}
+	return mockService
 }
 
 func (m *mockSearchService) FindAll() ([]utils.Book, error) {
-	return []utils.Book{
-		{Isbn13: 1234567890123, Isbn10: "123457890", Title: "Book 1", Authors: "Author 1"},
-		{Isbn13: 9876543210987, Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"},
-	}, nil
+	return m.books, m.err
 }
 
 func (m *mockSearchService) FindByQuery(query string) ([]utils.Book, error) {
 	// Mock implementation
-	if query == "Book 1" {
-		return []utils.Book{
-			{Isbn13: 1234567890123, Isbn10: "123457890", Title: "Book 1", Authors: "Author 1"},
-		}, nil
+	var filteredBooks []utils.Book
+	for _, book := range m.books {
+		if book.Title == query || book.Authors == query {
+			filteredBooks = append(filteredBooks, book)
+		}
 	}
-	return nil, nil
+	return filteredBooks, m.err
 }
+
 func (m *mockSearchService) FindByID(id uint) {}
 
 func TestHandlerFindAll(t *testing.T) {
+
+	mockSearchService := setupService()
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	handler := NewSQLiteSearchHandler(&mockSearchService{})
+	handler := NewSQLiteSearchHandler(mockSearchService)
 	router.GET("/api/v1/books", handler.FindAll)
 
 	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
@@ -62,10 +77,12 @@ func TestHandlerFindAll(t *testing.T) {
 }
 
 func TestHandlerFindByQuery(t *testing.T) {
+
+	mockSearchService := setupService()
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	handler := NewSQLiteSearchHandler(&mockSearchService{})
+	handler := NewSQLiteSearchHandler(mockSearchService)
 	router.GET("/api/v1/books/search", handler.FindByQuery)
 
 	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)

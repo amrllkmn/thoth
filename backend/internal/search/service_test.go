@@ -27,7 +27,7 @@ func (m *MockBookRepository) FindByQuery(query string) ([]utils.Book, error) {
 }
 func (m *MockBookRepository) FindByID(id uint) {}
 
-func setupTest() *MockBookRepository {
+func setupRepo() *MockBookRepository {
 	mockBooks := []utils.Book{
 		{Isbn13: 1234567890123, Isbn10: "1234567890", Title: "Book 1", Authors: "Author 1"},
 		{Isbn13: 9876543210987, Isbn10: "0987654321", Title: "Book 2", Authors: "Author 2"},
@@ -41,7 +41,7 @@ func setupTest() *MockBookRepository {
 }
 
 func TestServiceFindAll(t *testing.T) {
-	mockRepo := setupTest()
+	mockRepo := setupRepo()
 
 	service := NewSQLiteSearchService(mockRepo)
 
@@ -53,7 +53,7 @@ func TestServiceFindAll(t *testing.T) {
 }
 
 func TestServiceFindByQuery(t *testing.T) {
-	mockRepo := setupTest()
+	mockRepo := setupRepo()
 
 	service := NewSQLiteSearchService(mockRepo)
 
