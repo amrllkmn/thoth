@@ -6,8 +6,8 @@ type SQLiteSearchService struct {
 	repo utils.BookRepository
 }
 
-func (s *SQLiteSearchService) FindAll() ([]utils.Book, error) {
-	books, err := s.repo.FindAll()
+func (s *SQLiteSearchService) FindAll(page, limit int) ([]utils.Book, error) {
+	books, err := s.repo.FindAll(page, limit)
 	if err != nil {
 		return nil, err
 	}

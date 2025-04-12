@@ -2,6 +2,7 @@ package search
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,20 @@ type SQLiteSearchHandler struct {
 }
 
 func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
-	books, err := h.searchService.FindAll()
+	page := c.Query("page")
+	limit := c.Query("limit")
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		pageInt = 1
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		limitInt = 20 // Default limit
+	}
+
+	books, err := h.searchService.FindAll(pageInt, limitInt)
 	if err != nil {
 		log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -25,6 +39,8 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 		"books": books,
 		"metadata": gin.H{
 			"total": len(books),
+			"page":  pageInt,
+			"limit": limitInt,
 		},
 	})
 }

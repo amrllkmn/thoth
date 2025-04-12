@@ -12,3 +12,16 @@ func InitDB() *gorm.DB {
 	}
 	return db
 }
+
+func Paginate(page, limit int) func(db *gorm.DB) *gorm.DB {
+	if page <= 0 {
+		page = 1
+	}
+	if limit <= 0 {
+		limit = 20
+	}
+	offset := (page - 1) * limit
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(offset).Limit(limit)
+	}
+}
