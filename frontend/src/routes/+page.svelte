@@ -98,13 +98,13 @@
 <div class="space-y-4 sm:space-y-6">
 	<SearchBar />
 	<EngineToggle />
-  {#if !books || books.length < 1}
-    <EmptyPage/>
-  {:else }
-	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-		{#each books as book}
-			<BookCard {book} />
-		{/each}
-	</div>
-  {/if}
+	{#if !books || books.length < 1}
+		<EmptyPage />
+	{:else}
+		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+			{#each books as book}
+				<BookCard {book} />
+			{/each}
+		</div>
+	{/if}
 </div>
