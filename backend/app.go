@@ -21,7 +21,7 @@ type App struct {
 func setupCORS(router *gin.Engine) {
 	allowedOrigins := os.Getenv("ALLOWED_ORIGINS")
 	if allowedOrigins == "" {
-		allowedOrigins = "http://localhost:5172"
+		allowedOrigins = "http://localhost:5173"
 	}
 	config := cors.Config{
 		AllowOrigins: []string{allowedOrigins},
