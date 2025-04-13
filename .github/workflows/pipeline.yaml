@@ -60,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: deploy-group
     needs: [backend, changes]
-    if: needs.changes.outputs.backend == 'true' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.backend == 'true' && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

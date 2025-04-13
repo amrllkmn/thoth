@@ -1,23 +1,9 @@
 <script lang="ts">
 	import * as Card from '../card';
 	import { Star } from 'lucide-svelte';
-	interface IBook {
-		id: number;
-		isbn13: string;
-		isbn10: string;
-		title: string;
-		subtitle: string;
-		authors: string;
-		categories: string;
-		thumbnail: string;
-		description: string;
-		published_year: number;
-		average_rating: number;
-		num_pages: number;
-		ratings_count: number;
-	}
+	import type { TBook } from '$lib/types';
 
-	let { book }: { book: IBook } = $props();
+	let { book }: { book: TBook } = $props();
 	let primaryCategory = book.categories?.split(',')[0]?.trim() || 'Unknown';
 	let formattedRating = book.average_rating ? book.average_rating.toFixed(1) : 'N/A';
 	let isbn = book.isbn10 || book.isbn13;
