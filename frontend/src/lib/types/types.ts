@@ -12,4 +12,4 @@ export type TBook = {
 	average_rating: number;
 	num_pages: number;
 	ratings_count: number;
-}
+};

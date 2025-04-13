@@ -5,7 +5,7 @@
 	import { SearchBar } from '$lib/components/ui/search-bar';
 	import { Title } from '$lib/components/ui/title';
 
-  let { data } = $props();
+	let { data } = $props();
 </script>
 
 <Title />
