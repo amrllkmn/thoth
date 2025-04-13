@@ -2,12 +2,15 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/amrllkmn/thoth/backend/internal/database"
 	"github.com/amrllkmn/thoth/backend/internal/search"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	"github.com/gin-contrib/cors"
 )
 
 type App struct {
@@ -15,9 +18,24 @@ type App struct {
 	Db     *gorm.DB
 }
 
+func setupCORS(router *gin.Engine) {
+	allowedOrigins := os.Getenv("ALLOWED_ORIGINS")
+	if allowedOrigins == "" {
+		allowedOrigins = "http://localhost:5173"
+	}
+	config := cors.Config{
+		AllowOrigins: []string{allowedOrigins},
+		AllowMethods: []string{"GET", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type"},
+	}
+	router.Use(cors.New(config))
+}
+
 func CreateApp() App {
 	router := gin.Default()
 	db := database.InitDB()
+
+	setupCORS(router)
 
 	return App{
 		Router: router,
