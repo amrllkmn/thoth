@@ -32,7 +32,7 @@ func TestRepoFindByQuery(t *testing.T) {
 	db := setupTestDB()
 	repo := NewSQLiteBookRepository(db)
 
-	books, err := repo.FindByQuery("Book 1")
+	books, err := repo.FindByQuery("Book 1", 1, 10)
 	assert.NoError(t, err)
 	assert.Len(t, books, 1)
 	assert.Equal(t, "Book 1", books[0].Title)
@@ -57,7 +57,7 @@ func TestRepoFindByQuery_DBError(t *testing.T) {
 	// Simulate a DB error
 	db.Migrator().DropTable(&utils.Book{})
 
-	books, err := repo.FindByQuery("Book 1")
+	books, err := repo.FindByQuery("Book 1", 1, 10)
 	assert.Error(t, err)
 	assert.Nil(t, books)
 }

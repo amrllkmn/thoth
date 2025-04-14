@@ -33,7 +33,7 @@ func (m *mockSearchService) FindAll(page, limit int) ([]utils.Book, error) {
 	return m.books, m.err
 }
 
-func (m *mockSearchService) FindByQuery(query string) ([]utils.Book, error) {
+func (m *mockSearchService) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
 	// Mock implementation
 	var filteredBooks []utils.Book
 	for _, book := range m.books {

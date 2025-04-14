@@ -14,8 +14,8 @@ func (s *SQLiteSearchService) FindAll(page, limit int) ([]utils.Book, error) {
 	return books, nil
 }
 
-func (s *SQLiteSearchService) FindByQuery(query string) ([]utils.Book, error) {
-	books, err := s.repo.FindByQuery(query)
+func (s *SQLiteSearchService) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
+	books, err := s.repo.FindByQuery(query, page, limit)
 	if err != nil {
 		return nil, err
 	}

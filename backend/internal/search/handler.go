@@ -24,7 +24,7 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
-		limitInt = 20 // Default limit
+		limitInt = 10 // Default limit
 	}
 
 	books, err := h.searchService.FindAll(pageInt, limitInt)
@@ -46,8 +46,20 @@ func (h *SQLiteSearchHandler) FindAll(c *gin.Context) {
 }
 
 func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
+	page := c.Query("page")
+	limit := c.Query("limit")
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		pageInt = 1
+	}
+
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		limitInt = 10 // Default limit
+	}
 	query := c.Query("query")
-	books, err := h.searchService.FindByQuery(query)
+	books, err := h.searchService.FindByQuery(query, pageInt, limitInt)
 	if err != nil {
 		log.Error(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -60,6 +72,8 @@ func (h *SQLiteSearchHandler) FindByQuery(c *gin.Context) {
 		"metadata": gin.H{
 			"total": len(books),
 			"query": query,
+			"page":  pageInt,
+			"limit": limitInt,
 		},
 	})
 }
