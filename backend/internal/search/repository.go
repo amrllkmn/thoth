@@ -20,9 +20,9 @@ func (r *SQLiteBookRepository) FindAll(page, limit int) ([]utils.Book, error) {
 	return books, nil
 
 }
-func (r *SQLiteBookRepository) FindByQuery(query string) ([]utils.Book, error) {
+func (r *SQLiteBookRepository) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
 	var books []utils.Book
-	if err := r.db.Where("title LIKE ?", "%"+query+"%").Or("authors LIKE ?", "%"+query+"%").Find(&books).Error; err != nil {
+	if err := r.db.Scopes(database.Paginate(page, limit)).Where("title LIKE ?", "%"+query+"%").Or("authors LIKE ?", "%"+query+"%").Find(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil

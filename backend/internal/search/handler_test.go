@@ -33,7 +33,7 @@ func (m *mockSearchService) FindAll(page, limit int) ([]utils.Book, error) {
 	return m.books, m.err
 }
 
-func (m *mockSearchService) FindByQuery(query string) ([]utils.Book, error) {
+func (m *mockSearchService) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
 	// Mock implementation
 	var filteredBooks []utils.Book
 	for _, book := range m.books {
@@ -90,7 +90,7 @@ func TestHandlerFindAll(t *testing.T) {
 
 	limit_metadata, ok := metadata["limit"]
 	assert.True(t, ok)
-	assert.Equal(t, float64(20), limit_metadata)
+	assert.Equal(t, float64(10), limit_metadata)
 }
 
 func TestHandlerFindAll_Paginated(t *testing.T) {

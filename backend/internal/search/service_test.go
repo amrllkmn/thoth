@@ -16,7 +16,7 @@ func (m *MockBookRepository) FindAll(page, limit int) ([]utils.Book, error) {
 	return m.books, m.err
 }
 
-func (m *MockBookRepository) FindByQuery(query string) ([]utils.Book, error) {
+func (m *MockBookRepository) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
 	var filteredBooks []utils.Book
 	for _, book := range m.books {
 		if book.Title == query || book.Authors == query {
@@ -64,7 +64,7 @@ func TestServiceFindByQuery(t *testing.T) {
 
 	service := NewSQLiteSearchService(mockRepo)
 
-	books, err := service.FindByQuery("Book 1")
+	books, err := service.FindByQuery("Book 1", 1, 10)
 
 	assert.NoError(t, err)
 	assert.Len(t, books, 1)
@@ -86,7 +86,7 @@ func TestServiceFindByQuery_RepoError(t *testing.T) {
 	mockRepo.err = assert.AnError
 	mockRepo.books = nil
 	service := NewSQLiteSearchService(mockRepo)
-	books, err := service.FindByQuery("Book 1")
+	books, err := service.FindByQuery("Book 1", 1, 10)
 	assert.Error(t, err)
 	assert.Nil(t, books)
 }
