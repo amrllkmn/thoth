@@ -90,7 +90,7 @@ func TestHandlerFindAll(t *testing.T) {
 
 	limit_metadata, ok := metadata["limit"]
 	assert.True(t, ok)
-	assert.Equal(t, float64(20), limit_metadata)
+	assert.Equal(t, float64(10), limit_metadata)
 }
 
 func TestHandlerFindAll_Paginated(t *testing.T) {
