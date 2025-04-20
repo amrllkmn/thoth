@@ -22,7 +22,7 @@ func (r *SQLiteBookRepository) FindAll(page, limit int) ([]utils.Book, error) {
 }
 func (r *SQLiteBookRepository) FindByQuery(query string, page, limit int) ([]utils.Book, error) {
 	var books []utils.Book
-	if err := r.db.Scopes(database.Paginate(page, limit)).Where("title LIKE ?", "%"+query+"%").Or("authors LIKE ?", "%"+query+"%").Find(&books).Error; err != nil {
+	if err := r.db.Scopes(database.Paginate(page, limit)).Where("title LIKE ?", "%"+query+"%").Or("authors LIKE ?", "%"+query+"%").Or("isbn13 LIKE ?", "%"+query+"%").Or("isbn10 LIKE ?", "%"+query+"%").Find(&books).Error; err != nil {
 		return nil, err
 	}
 	return books, nil
