@@ -6,11 +6,12 @@
 	import { Title } from '$lib/components/ui/title';
 
 	let { data } = $props();
+	let query = $state('');
 </script>
 
 <Title />
 <div class="space-y-4 sm:space-y-6">
-	<SearchBar />
+	<SearchBar {query} />
 	<EngineToggle />
 	{#if !data.books || data.books.length < 1}
 		<EmptyPage />
