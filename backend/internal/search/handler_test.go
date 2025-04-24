@@ -61,9 +61,9 @@ func TestHandlerFindAll(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books", handler.FindAll)
+	router.GET("/api/v1/books/sqlite", handler.FindAll)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite", nil)
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -100,9 +100,9 @@ func TestHandlerFindAll_Paginated(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books", handler.FindAll)
+	router.GET("/api/v1/books/sqlite", handler.FindAll)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books?page=2&limit=30", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite?page=2&limit=30", nil)
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -138,13 +138,13 @@ func TestHandlerFindAll_Error(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books", handler.FindAll)
+	router.GET("/api/v1/books/sqlite", handler.FindAll)
 
 	// Simulate an error in the service
 	mockSearchService.err = assert.AnError
 	mockSearchService.books = nil
 
-	req, _ := http.NewRequest("GET", "/api/v1/books", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite", nil)
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
@@ -168,9 +168,9 @@ func TestHandlerFindByQuery(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/search", handler.FindByQuery)
+	router.GET("/api/v1/books/sqlite/search", handler.FindByQuery)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/search?query=Book 1", nil)
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -210,13 +210,13 @@ func TestHandlerFindByQuery_Error(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/search", handler.FindByQuery)
+	router.GET("/api/v1/books/sqlite/search", handler.FindByQuery)
 
 	// Simulate an error in the service
 	mockSearchService.err = assert.AnError
 	mockSearchService.books = nil
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/search?query=Book 1", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/search?query=Book 1", nil)
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
@@ -239,9 +239,9 @@ func TestHandlerFindByID(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/:isbn", handler.FindByID)
+	router.GET("/api/v1/books/sqlite/:isbn", handler.FindByID)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/1234567890123", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/1234567890123", nil)
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -262,9 +262,9 @@ func TestHandlerFindByID_NotFound(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/:isbn", handler.FindByID)
+	router.GET("/api/v1/books/sqlite/:isbn", handler.FindByID)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/non-existing-isbn", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/non-existing-isbn", nil)
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
@@ -285,13 +285,13 @@ func TestHandlerFindByID_Error(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/:isbn", handler.FindByID)
+	router.GET("/api/v1/books/sqlite/:isbn", handler.FindByID)
 
 	// Simulate an error in the service
 	mockSearchService.err = assert.AnError
 	mockSearchService.books = nil
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/1234567890123", nil)
+	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/1234567890123", nil)
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
