@@ -5,17 +5,20 @@ import (
 	"os"
 
 	"github.com/amrllkmn/thoth/backend/internal/database"
+	"github.com/amrllkmn/thoth/backend/internal/indexed_search"
 	"github.com/amrllkmn/thoth/backend/internal/search"
 	"github.com/amrllkmn/thoth/backend/internal/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/meilisearch/meilisearch-go"
 	"gorm.io/gorm"
 
 	"github.com/gin-contrib/cors"
 )
 
 type App struct {
-	Router *gin.Engine
-	Db     *gorm.DB
+	Router      *gin.Engine
+	Db          *gorm.DB
+	Meilisearch meilisearch.ServiceManager
 }
 
 func setupCORS(router *gin.Engine) {
@@ -34,12 +37,14 @@ func setupCORS(router *gin.Engine) {
 func CreateApp() App {
 	router := gin.Default()
 	db := database.InitDB()
+	meilisearchClient := indexed_search.InitMeilisearchClient()
 
 	setupCORS(router)
 
 	return App{
-		Router: router,
-		Db:     db,
+		Router:      router,
+		Db:          db,
+		Meilisearch: meilisearchClient,
 	}
 }
 
@@ -53,6 +58,11 @@ func (app *App) Initialize() {
 	sqliteSearchService := search.NewSQLiteSearchService(sqliteBookRepo)
 	sqliteSearchHandler := search.NewSQLiteSearchHandler(sqliteSearchService)
 	search.SetupSQLiteRoutes(app.Router, *sqliteSearchHandler)
+
+	meiliSearchRepo := indexed_search.NewMeilisearchBookRepository(app.Meilisearch)
+	meiliSearchService := indexed_search.NewMeilisearchSearchService(meiliSearchRepo)
+	meiliSearchHandler := indexed_search.NewMeilisearchHandler(meiliSearchService)
+	indexed_search.SetupMeilisearchRoutes(app.Router, *meiliSearchHandler)
 }
 
 func (app *App) Run() {
