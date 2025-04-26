@@ -7,12 +7,15 @@
 
 	let { data } = $props();
 	let query = $state('');
+	let checked = $state(false)
 </script>
 
 <Title />
 <div class="space-y-4 sm:space-y-6">
-	<SearchBar {query} />
-	<EngineToggle />
+	<form method="GET" class="relative space-y-4 sm:space-y-6">
+		<SearchBar {query} />
+		<EngineToggle {checked} />
+	</form>
 	{#if !data.books || data.books.length < 1}
 		<EmptyPage />
 	{:else}

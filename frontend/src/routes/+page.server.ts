@@ -5,7 +5,9 @@ import { API_URL } from '$env/static/private';
 export async function load({ fetch, url }) {
 	try {
 		const query = url.searchParams.get('query');
-		const booksUrl = new URL(`${API_URL}/v1/books/sqlite/search`);
+		const engine = url.searchParams.get('engine') ? 'meilisearch' : 'sqlite'
+
+		const booksUrl = new URL(`${API_URL}/v1/books/${engine}/search`);
 		if (query && query.trim() !== '') {
 			booksUrl.searchParams.set('query', query);
 		}
