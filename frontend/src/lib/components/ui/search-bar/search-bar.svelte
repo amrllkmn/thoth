@@ -3,12 +3,10 @@
 	let { query } = $props();
 </script>
 
-<form method="GET" class="relative">
-	<Input
-		type="text"
-		name="query"
-		bind:value={query}
-		placeholder="Search for a book and hit Enter"
-		class="placeholder:text-muted-secondary h-10 w-full text-sm sm:text-base"
-	/>
-</form>
+<Input
+	type="text"
+	name="query"
+	bind:value={query}
+	placeholder="Search for a book and hit Enter"
+	class="placeholder:text-muted-secondary h-10 w-full text-sm sm:text-base"
+/>
