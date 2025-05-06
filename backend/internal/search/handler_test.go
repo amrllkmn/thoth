@@ -1,6 +1,7 @@
 package search
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -168,9 +169,24 @@ func TestHandlerFindByQuery(t *testing.T) {
 	router := gin.Default()
 
 	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/sqlite/search", handler.FindByQuery)
+	router.POST("/api/v1/books/sqlite/search", handler.FindByQuery)
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/search?query=Book 1", nil)
+	// Create request body using the FindRequest struct
+	requestBody := utils.FindRequest{
+		Query:    "Book 1",
+		PageInt:  1,
+		LimitInt: 10,
+	}
+
+	// Convert request body to JSON
+	jsonBody, err := json.Marshal(requestBody)
+	assert.NoError(t, err)
+
+	// Create request with body
+	req, _ := http.NewRequest("POST", "/api/v1/books/sqlite/search", bytes.NewBuffer(jsonBody))
+
+	// Set content type header
+	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	var responseBody map[string]any
 
@@ -178,7 +194,7 @@ func TestHandlerFindByQuery(t *testing.T) {
 	router.ServeHTTP(resp, req)
 	assert.Equal(t, http.StatusOK, resp.Code)
 
-	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	err = json.Unmarshal(resp.Body.Bytes(), &responseBody)
 	assert.NoError(t, err)
 
 	// Assert response body
@@ -208,15 +224,29 @@ func TestHandlerFindByQuery_Error(t *testing.T) {
 	mockSearchService := setupService()
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
-
-	handler := NewSQLiteSearchHandler(mockSearchService)
-	router.GET("/api/v1/books/sqlite/search", handler.FindByQuery)
-
 	// Simulate an error in the service
 	mockSearchService.err = assert.AnError
 	mockSearchService.books = nil
 
-	req, _ := http.NewRequest("GET", "/api/v1/books/sqlite/search?query=Book 1", nil)
+	handler := NewSQLiteSearchHandler(mockSearchService)
+	router.POST("/api/v1/books/sqlite/search", handler.FindByQuery)
+
+	// Create request body using the FindRequest struct
+	requestBody := utils.FindRequest{
+		Query:    "Book 1",
+		PageInt:  1,
+		LimitInt: 10,
+	}
+
+	// Convert request body to JSON
+	jsonBody, err := json.Marshal(requestBody)
+	assert.NoError(t, err)
+
+	// Create request with body
+	req, _ := http.NewRequest("POST", "/api/v1/books/sqlite/search", bytes.NewBuffer(jsonBody))
+
+	// Set content type header
+	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 
 	router.ServeHTTP(resp, req)
@@ -225,7 +255,7 @@ func TestHandlerFindByQuery_Error(t *testing.T) {
 	fmt.Println(resp.Body.String())
 
 	var responseBody map[string]any
-	err := json.Unmarshal(resp.Body.Bytes(), &responseBody)
+	err = json.Unmarshal(resp.Body.Bytes(), &responseBody)
 	assert.NoError(t, err)
 
 	message, ok := responseBody["message"].(string)

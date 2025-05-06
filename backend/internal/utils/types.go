@@ -16,6 +16,12 @@ type Book struct {
 	RatingsCount  int     `json:"ratings_count"`
 }
 
+type FindRequest struct {
+	Query    string `json:"query"`
+	PageInt  int    `json:"pageInt"`
+	LimitInt int    `json:"limitInt"`
+}
+
 type BookRepository interface {
 	FindAll(page, limit int) ([]Book, error)
 	FindByQuery(query string, page, limit int) ([]Book, error)
