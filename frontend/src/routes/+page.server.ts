@@ -4,7 +4,6 @@ import { API_URL } from '$env/static/private';
 
 export async function load({ fetch }) {
 	try {
-
 		const booksUrl = new URL(`${API_URL}/v1/books/sqlite`);
 		const res = await fetch(booksUrl);
 		const result = await res.json();
