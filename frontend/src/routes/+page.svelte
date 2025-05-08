@@ -3,6 +3,7 @@
 	import EmptyPage from '$lib/components/ui/empty-page/empty-page.svelte';
 	import { EngineToggle } from '$lib/components/ui/engine-toggle';
 	import { SearchBar } from '$lib/components/ui/search-bar';
+	import { Spinner } from '$lib/components/ui/spinner';
 	import { Title } from '$lib/components/ui/title';
 
 	let { data } = $props();
@@ -42,7 +43,7 @@
 		<EngineToggle {checked} />
 	</form>
 	{#if searching}
-		<p>Searching...</p>
+		<Spinner />
 	{:else if !searching && (!data.books || data.books.length < 1)}
 		<EmptyPage />
 	{:else}
